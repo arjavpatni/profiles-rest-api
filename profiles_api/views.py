@@ -4,6 +4,9 @@ from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework import filters
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.settings import api_settings
+
 
 from profiles_api import serializers
 from profiles_api import models
@@ -107,3 +110,12 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.UpdateOwnProfile,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name', 'email',) #to specify search fields.
+
+
+class UserLoginApiView(ObtainAuthToken):
+    """Handle creating user authentication token"""
+    #It doesn't by default enable itself in the browsable Django admin site
+    # so we need to override this class and customize it so it's visible in the browsable api
+    #add a class variable here called renderer classes underscore classes equals and then import
+    #the default renderer class from the API settings that's why we import the API settings at the top.
+    renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
