@@ -116,6 +116,16 @@ class UserLoginApiView(ObtainAuthToken):
     """Handle creating user authentication token"""
     #It doesn't by default enable itself in the browsable Django admin site
     # so we need to override this class and customize it so it's visible in the browsable api
-    #add a class variable here called renderer classes underscore classes equals and then import
+    #add a class variable here called renderer_classes equals and then import
     #the default renderer class from the API settings that's why we import the API settings at the top.
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
+
+class UserProfileFeedViewSet(viewssets.ModelViewSet):
+    """Handles creating, reading and updating profile feed itrms."""
+    authentication_classes = (TokenAuthentication,)
+    serializer_class=serializers.ProfileFeedItemSerializer
+    queryset = models.ProfileFeedItem.objects.all()
+
+    def perform_create(self, serializer):
+        """Sets the user profile to the logged in user"""
+        
