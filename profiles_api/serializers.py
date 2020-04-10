@@ -30,3 +30,15 @@ class UserProfileSerializer(serializers.ModelSerializer):
         )
 
         return user
+
+
+class ProfileFeedItemSerializer(serializers.ModelSerializer):
+    """Serializes profile feed items."""
+
+    class Meta:
+        model = models.ProfileFeedItem
+        fields = ('id','user_profile','status_text','created_on')
+        #id is created by Django automatically and set to read only.
+        #we want set user_profile on the basis of user authenticated.
+        #only status_text is editable else are read only.
+        extra_kwargs = {'user_profile':{'read_only': True}}
