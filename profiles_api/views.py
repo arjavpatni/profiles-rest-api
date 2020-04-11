@@ -6,6 +6,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework import filters
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 
 from profiles_api import serializers
@@ -107,7 +108,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.UserProfileSerializer
     queryset = models.UserProfile.objects.all()
     authentication_classes = (TokenAuthentication,) #to create as a tuple (,)
-    permission_classes = (permissions.UpdateOwnProfile,)
+    permission_classes = (permissions.UpdateOwnProfile,) #to include permission from permissions.py
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name', 'email',) #to specify search fields.
 
@@ -125,9 +126,12 @@ class UserProfileFeedViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     serializer_class=serializers.ProfileFeedItemSerializer
     queryset = models.ProfileFeedItem.objects.all()
+    permission_classes = (
+        permissions.UpdateOwnStatus,
+        IsAuthenticatedOrReadOnly #if user is not authenticated, objects are read-only.
+    )
 
     def perform_create(self, serializer):
         """Sets the user profile to the logged in user."""
         serializer.save(user_profile=self.request.user)
         #if user has authenticated, request will have a user associated to authenticated user.
-        
