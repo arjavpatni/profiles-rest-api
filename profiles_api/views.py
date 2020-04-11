@@ -120,12 +120,14 @@ class UserLoginApiView(ObtainAuthToken):
     #the default renderer class from the API settings that's why we import the API settings at the top.
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
 
-class UserProfileFeedViewSet(viewssets.ModelViewSet):
-    """Handles creating, reading and updating profile feed itrms."""
+class UserProfileFeedViewSet(viewsets.ModelViewSet):
+    """Handles creating, reading and updating profile feed items."""
     authentication_classes = (TokenAuthentication,)
     serializer_class=serializers.ProfileFeedItemSerializer
     queryset = models.ProfileFeedItem.objects.all()
 
     def perform_create(self, serializer):
-        """Sets the user profile to the logged in user"""
+        """Sets the user profile to the logged in user."""
+        serializer.save(user_profile=self.request.user)
+        #if user has authenticated, request will have a user associated to authenticated user.
         
